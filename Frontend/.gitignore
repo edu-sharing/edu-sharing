@@ -37,3 +37,6 @@ docs/
 # edu-sharing
 src/assets/endpoint.txt
 /storybook-static/*
+
+# maven
+node/

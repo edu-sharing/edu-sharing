@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+
+  <bean id="mimetypeConfigService" class="org.springframework.extensions.config.xml.XMLConfigService" init-method="init">
+    <constructor-arg>
+      <bean class="org.alfresco.util.ResourceFinderConfigSource">
+        <property name="resourceFinder">
+          <ref bean="resourceFinder" />
+        </property>
+        <property name="locations">
+          <list>
+            <!-- we have to overwrite the whole file cause we need mbz in zip area(can not overwrite)
+            <value>classpath:alfresco/mimetype/mimetype-map.xml</value>
+            -->
+            <value>classpath:alfresco/extension/mimetypes-extension.xml</value>
+            <value>classpath:alfresco/mimetype/mimetype-map-openoffice.xml</value>
+            <value>classpath*:alfresco/module/*/mimetype-map*.xml</value>
+            <value>classpath*:alfresco/extension/mimetype/*-map.xml</value>
+          </list>
+        </property>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+
+</beans>
