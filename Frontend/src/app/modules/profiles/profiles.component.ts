@@ -1,7 +1,12 @@
 
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {Translation} from '../../core-ui-module/translation';
-import {ProfileSettings, SessionStorageService, UserStats} from '../../core-module/core.module';
+import {
+    LoginResult,
+    ProfileSettings,
+    SessionStorageService, UIConstants,
+    UserStats
+} from '../../core-module/core.module';
 import {TranslateService} from '@ngx-translate/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -58,6 +63,7 @@ export class ProfilesComponent {
     ];
   }
   private static PASSWORD_MIN_LENGTH = 5;
+  readonly ROUTER_PREFIX = UIConstants.ROUTER_PREFIX;
   public user: User;
   public userStats: UserStats;
   public userEdit: User;
@@ -68,6 +74,7 @@ export class ProfilesComponent {
   public editAbout = false;
   public oldPassword='';
   public password='';
+  public hasAccessWorkspace=false;
   // is editing allowed at all (via global config)
   editProfile: boolean;
   private editProfileUrl: string;
@@ -96,6 +103,7 @@ export class ProfilesComponent {
         GlobalContainerComponent.finishPreloading();
         this.iamService.getUser().subscribe((me)=> {
           this.isMe = profile.person.authorityName === me.person.authorityName;
+          this.canAccessWorkspace(login);
           if(this.isMe && login.isGuest) {
             RestHelper.goToLogin(this.router,this.config);
           }
@@ -243,5 +251,26 @@ export class ProfilesComponent {
   savePersistentIds() {
     this.saveEdits();
   }
+
+    /**
+     * Check if USER has permissions to activate the Links in statistics section
+     */
+    public canActivateLinks(): boolean {
+        return this.isMe && this.hasAccessWorkspace;
+    }
+
+    /**
+     * check if current user have access to workspace
+     * @param login params that contain all userPermission
+     */
+    private canAccessWorkspace(login: LoginResult): void {
+        this.hasAccessWorkspace = (
+            login.toolPermissions &&
+            login.toolPermissions.indexOf(
+                RestConstants.TOOLPERMISSION_WORKSPACE,
+            ) !== -1
+        );
+    }
+
 }
 
